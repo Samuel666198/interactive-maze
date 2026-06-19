@@ -1,19 +1,34 @@
 (function () {
+  var viewport = {
+    width: window.innerWidth || document.documentElement.clientWidth || 1200,
+    height: window.innerHeight || document.documentElement.clientHeight || 800
+  };
+
   function $(selector) {
     return document.querySelector(selector);
   }
 
-  function centerOf(el) {
-    const rect = el.getBoundingClientRect();
-    return {
-      x: rect.left + rect.width / 2,
-      y: rect.top + rect.height / 2
-    };
+  function updateViewport() {
+    viewport.width = window.innerWidth || document.documentElement.clientWidth || 1200;
+    viewport.height = window.innerHeight || document.documentElement.clientHeight || 800;
   }
 
-  function burst(text, color, target) {
-    if (!target) return;
-    const pos = centerOf(target);
+  window.addEventListener('resize', updateViewport, { passive: true });
+
+  function anchorPoint(kind) {
+    const vw = viewport.width;
+    const vh = viewport.height;
+    if (kind === 'map') {
+      return { x: Math.max(190, vw * 0.22), y: Math.max(170, vh * 0.42) };
+    }
+    if (kind === 'win') {
+      return { x: vw * 0.5, y: vh * 0.42 };
+    }
+    return { x: vw * 0.5, y: vh * 0.43 };
+  }
+
+  function burst(text, color, kind) {
+    const pos = anchorPoint(kind);
     const el = document.createElement('div');
     el.className = 'adventure-burst';
     el.textContent = text;
@@ -48,15 +63,14 @@
       if (isCorrect) {
         restartClass(quiz, 'answer-correct');
         restartClass(canvas, 'map-advance');
-        burst('前进', '#668d66', canvas);
+        burst('前进', '#668d66', 'map');
       } else {
         restartClass(quiz, 'answer-wrong');
-        burst('停留', '#bd6657', quiz);
+        burst('停留', '#bd6657', 'quiz');
       }
     },
     win: function () {
-      const card = $('.win-card');
-      burst('通关', '#b47d3a', card);
+      burst('通关', '#b47d3a', 'win');
     }
   };
 })();

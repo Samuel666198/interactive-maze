@@ -2,7 +2,11 @@
 setlocal
 cd /d "%~dp0"
 set "PORT=8018"
-set "URL=http://localhost:%PORT%/"
+set "URL=http://localhost:%PORT%/?v=%RANDOM%%RANDOM%"
+
+for /f "tokens=5" %%a in ('netstat -ano ^| findstr ":%PORT%" ^| findstr "LISTENING"') do (
+  taskkill /PID %%a /F >nul 2>nul
+)
 
 powershell -NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -Command ^
   "$root = '%~dp0';" ^

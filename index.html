@@ -64,19 +64,20 @@ body::before {
 }
 .top-status span + span { color: var(--muted); background: transparent; }
 .toolbar .btns { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
-.toolbar button, .footer button, .quiz-input-wrap button, .win-card button, .modal .modal-btns button {
+.toolbar button, .control-card button, .quiz-input-wrap button, .win-card button, .modal .modal-btns button {
   border: 1px solid rgba(38,59,46,0.08); border-radius: 8px; cursor: pointer; font-weight: 800;
-  transition: transform 0.18s ease, box-shadow 0.18s ease, filter 0.18s ease, background 0.18s ease;
+  transition: transform 0.18s ease, background 0.18s ease;
 }
 .toolbar button {
   padding: 8px 12px; font-size: 13px; color: var(--ink); box-shadow: none;
   background: rgba(255,255,255,0.62);
 }
-.toolbar button:hover, .footer button:hover, .quiz-input-wrap button:hover, .win-card button:hover, .modal .btn-ok:hover {
-  transform: translateY(-2px); filter: saturate(1.04); box-shadow: 0 10px 18px rgba(67, 54, 34, 0.18);
+.toolbar button:hover, .control-card button:hover, .quiz-input-wrap button:hover, .win-card button:hover, .modal .btn-ok:hover {
+  transform: translateY(-2px);
+  background-color: rgba(255,255,255,0.78);
 }
-.toolbar button:active, .footer button:active, .quiz-input-wrap button:active, .win-card button:active { transform: translateY(0) scale(0.98); }
-.toolbar .btn-start {
+.toolbar button:active, .control-card button:active, .quiz-input-wrap button:active, .win-card button:active { transform: translateY(0) scale(0.98); }
+.control-card .btn-start {
   padding: 9px 16px; color: #fff; font-size: 14px;
   background: linear-gradient(180deg, #6f9175, #4f7665);
   box-shadow: 0 8px 16px rgba(61, 93, 74, 0.18);
@@ -113,6 +114,7 @@ body::before {
   display: block;
   transform: translate3d(0, 0, 0);
   backface-visibility: hidden;
+  contain: strict;
 }
 .quiz-panel {
   flex: 1; padding: 18px 24px 24px;
@@ -145,13 +147,15 @@ body::before {
   animation: questionFloat 0.38s ease both;
 }
 .quiz-options { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; max-width: 680px; margin: 0 auto; width: 100%; }
+.quiz-options.locked { pointer-events: none; }
 .quiz-option {
   position: relative; overflow: hidden;
   min-height: 64px; padding: 14px 18px;
   background: rgba(255,255,255,0.68); border: 1px solid rgba(95,127,100,0.22);
   border-radius: 8px; font-size: 18px; cursor: pointer; text-align: center;
-  transition: transform 0.18s ease, background 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+  transition: transform 0.18s ease, background 0.18s ease, border-color 0.18s ease;
   color: #344337; font-weight: 800; display: flex; align-items: center; justify-content: center;
+  contain: paint;
 }
 .quiz-option::before {
   content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 5px;
@@ -159,7 +163,7 @@ body::before {
 }
 .quiz-option:hover {
   background: rgba(235, 241, 221, 0.9); border-color: rgba(95,127,100,0.45);
-  transform: translateY(-2px); box-shadow: 0 10px 18px rgba(69, 84, 62, 0.12);
+  transform: translateY(-2px);
 }
 .quiz-option:hover::before { opacity: 1; }
 .quiz-option.correct {
@@ -176,6 +180,7 @@ body::before {
   background: conic-gradient(var(--leaf) var(--pct), rgba(98,89,70,0.16) 0);
   display: flex; align-items: center; justify-content: center; position: relative;
   box-shadow: inset 0 0 0 1px rgba(38,59,46,0.1);
+  contain: paint;
 }
 .timer-inner {
   width: 45px; height: 45px; border-radius: 50%; background: rgba(255, 249, 236, 0.96);
@@ -211,28 +216,55 @@ body::before {
 .rank-badge.silver { background: #87908a; }
 .rank-badge.bronze { background: #a86c45; }
 .rank-badge.normal { background: #8da17c; }
+.rank-avatar {
+  width: 24px; height: 24px; border-radius: 7px;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: rgba(255,249,236,0.76); border: 1px solid rgba(97,119,83,0.18);
+  color: #5f7f64; font-size: 12px; font-weight: 900; flex-shrink: 0;
+}
 .rank-name { flex: 1; color: #334233; font-weight: 800; }
 .rank-pos { font-size: 12px; color: var(--muted); white-space: nowrap; }
-.footer {
-  display: flex; align-items: center; justify-content: center; gap: 10px;
-  width: fit-content; max-width: 100%; margin: 10px auto 0; padding: 8px;
+.control-card {
+  display: grid; grid-template-columns: auto minmax(280px, 1fr); align-items: center; gap: 14px;
+  width: min(760px, 100%); max-width: 100%; margin: 10px auto 0; padding: 10px;
   background: rgba(255,249,236,0.86); border: 1px solid rgba(97,119,83,0.18); border-radius: 8px;
   box-shadow: var(--soft-shadow);
   animation: panelIn 0.55s 0.24s ease both;
 }
+.control-action { display: flex; }
+.control-action .btn-start {
+  min-height: 48px;
+  min-width: 138px;
+  font-size: 16px;
+}
+.join-card {
+  display: flex; align-items: center; justify-content: flex-end; gap: 10px; min-width: 0;
+}
 .join-label {
   color: var(--muted); font-size: 13px; font-weight: 900; padding: 0 4px;
 }
-.footer input, .quiz-input-wrap input, .modal input, .modal select, .modal textarea {
+.avatar-picker { display: flex; gap: 5px; align-items: center; }
+.avatar-choice {
+  width: 34px; height: 34px; padding: 0 !important;
+  border-radius: 8px !important; background: rgba(255,255,255,0.58) !important;
+  color: #5f7f64 !important; font-size: 19px !important; font-weight: 900 !important;
+  border: 1px solid rgba(95,127,100,0.22) !important;
+}
+.avatar-choice.selected {
+  color: #fff !important;
+  background: linear-gradient(180deg, #7fa474, #5d8466) !important;
+  box-shadow: inset 0 -2px 0 rgba(0,0,0,0.12);
+}
+.control-card input, .quiz-input-wrap input, .modal input, .modal select, .modal textarea {
   background: rgba(255, 249, 236, 0.86); border: 1px solid rgba(95,127,100,0.28);
   border-radius: 8px; outline: none; color: var(--ink);
   transition: border-color 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
 }
-.footer input { padding: 10px 14px; font-size: 15px; width: 170px; }
-.footer input:focus, .quiz-input-wrap input:focus, .modal input:focus, .modal select:focus, .modal textarea:focus {
+.control-card input { padding: 10px 14px; font-size: 15px; width: 170px; }
+.control-card input:focus, .quiz-input-wrap input:focus, .modal input:focus, .modal select:focus, .modal textarea:focus {
   border-color: rgba(95,127,100,0.65); box-shadow: 0 0 0 3px rgba(134,168,115,0.18); background: rgba(255, 253, 246, 0.96);
 }
-.footer button {
+.control-card button {
   padding: 10px 20px; font-size: 15px; background: linear-gradient(180deg, #7fa474, #5d8466); color: #fff;
 }
 .overlay {
@@ -257,6 +289,51 @@ body::before {
 .modal .modal-btns button { padding: 9px 20px; font-size: 14px; }
 .modal .btn-ok { background: #668d66; color: #fff; }
 .modal .btn-cancel { background: #ded7c8; color: #5d5a51; }
+.config-actions {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 14px;
+}
+.config-actions button, .template-download {
+  border: 1px solid rgba(95,127,100,0.22); border-radius: 8px;
+  background: rgba(255,255,255,0.58); color: var(--ink); cursor: pointer;
+  font-size: 13px; font-weight: 800; padding: 8px 10px;
+}
+.template-download {
+  width: 100%; margin: 4px 0 10px; color: #6f512c;
+  border-color: rgba(183,128,70,0.28); background: rgba(255,255,255,0.72);
+}
+.stats-modal { max-width: 720px; }
+.stats-grid {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 10px 0 16px;
+}
+.stats-grid div {
+  padding: 12px 10px; border-radius: 8px; background: rgba(255,255,255,0.52);
+  border: 1px solid rgba(97,119,83,0.16); text-align: center;
+}
+.stats-grid strong { display: block; color: var(--moss); font-size: 24px; line-height: 1.1; }
+.stats-grid span { color: var(--muted); font-size: 12px; font-weight: 900; }
+.stats-section { margin-top: 14px; }
+.stats-section h3 {
+  font-size: 15px; color: var(--ink); margin-bottom: 8px; padding-bottom: 6px;
+  border-bottom: 1px solid rgba(97,119,83,0.14);
+}
+.student-stats-list, .round-history {
+  max-height: 180px; overflow: auto; display: grid; gap: 6px;
+}
+.student-stat-row, .round-row {
+  display: grid; grid-template-columns: 32px 1fr repeat(3, minmax(70px, auto)); align-items: center; gap: 8px;
+  padding: 8px 10px; border-radius: 8px; background: rgba(255,255,255,0.45);
+  border: 1px solid rgba(97,119,83,0.12); color: #394838; font-size: 13px; font-weight: 800;
+}
+.round-row { grid-template-columns: 76px 1fr 70px 92px; }
+.stat-avatar {
+  width: 25px; height: 25px; border-radius: 7px; display: inline-flex; align-items: center; justify-content: center;
+  color: #fff; background: #668d66; font-size: 12px; font-weight: 900;
+}
+.stat-name { color: var(--ink); font-weight: 900; }
+.empty-note {
+  color: var(--muted); font-size: 13px; text-align: center; padding: 18px 0;
+  background: rgba(255,255,255,0.36); border-radius: 8px;
+}
 .win-overlay {
   position: fixed; top:0;left:0;right:0;bottom:0;
   background: rgba(38,43,34,0.52); display: flex; align-items: center; justify-content: center; z-index: 200;
@@ -276,6 +353,40 @@ body::before {
 .win-card button { padding: 11px 28px; background: #b47d3a; color: #fff; font-size: 16px; }
 .current-player { font-size: 20px; font-weight: 900; color: var(--ink); text-align: left; margin-bottom: 0; }
 .current-player span { color: #a26d38; }
+.quiz-panel.waiting { justify-content: center; }
+.quiz-panel.waiting .quiz-head {
+  justify-content: center;
+  min-height: 0;
+  margin-bottom: 14px;
+}
+.quiz-panel.waiting .turn-card {
+  width: min(560px, 100%);
+  text-align: center;
+}
+.quiz-panel.waiting .turn-label,
+.quiz-panel.waiting .quiz-meta {
+  display: none;
+}
+.quiz-panel.waiting .current-player {
+  text-align: center;
+  font-size: clamp(26px, 3vw, 38px);
+  line-height: 1.2;
+}
+.quiz-panel.waiting .quiz-title {
+  width: fit-content;
+  max-width: min(520px, 100%);
+  margin: 0 auto 12px;
+  padding: 9px 22px;
+  color: #53624d;
+  background: rgba(255,255,255,0.62);
+}
+.quiz-panel.waiting .quiz-question {
+  min-height: 0;
+  margin-bottom: 0;
+  color: var(--muted);
+  font-size: 16px;
+  font-weight: 800;
+}
 .level-tag {
   display: inline-block; padding: 5px 12px; border-radius: 999px;
   font-size: 12px; font-weight: 900; color: #fff; align-self: center; margin-bottom: 0;
@@ -310,8 +421,17 @@ body::before {
   .current-player { text-align: center; }
   .maze-panel canvas { width: min(340px, 100%); height: auto; }
   .quiz-options { grid-template-columns: 1fr; }
-  .footer { flex-wrap: wrap; }
-  .footer input { width: min(260px, 100%); }
+  .control-card { grid-template-columns: 1fr; }
+  .control-action { justify-content: stretch; }
+  .control-action .btn-start { width: 100%; }
+  .join-card { flex-wrap: wrap; justify-content: center; }
+  .control-card input { width: min(260px, 100%); }
+  .avatar-picker { order: 3; width: 100%; justify-content: center; flex-wrap: wrap; }
+  .stats-grid { grid-template-columns: 1fr 1fr; }
+  .student-stat-row, .round-row { grid-template-columns: 28px 1fr 64px; }
+  .student-stat-row span:nth-child(4), .student-stat-row span:nth-child(5),
+  .round-row span:nth-child(4) { display: none; }
+  .config-actions { grid-template-columns: 1fr; }
 }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition-duration: 0.01ms !important; }
@@ -331,9 +451,9 @@ body::before {
       <span id="studentCount">0 位学生</span>
     </div>
     <div class="btns">
-      <button class="btn-start" id="btnStart" onclick="startGame()">🚩 开始闯关</button>
       <button class="btn-teach" onclick="openTeacherPanel()">教师模式</button>
       <button class="btn-import" onclick="openImportPanel()">导入题库</button>
+      <button class="btn-import" onclick="openStatsPanel()">课堂统计</button>
       <button class="btn-import" onclick="openRulePanel()">玩法说明</button>
       <button class="btn-reset" onclick="resetGame()">复位</button>
     </div>
@@ -346,19 +466,19 @@ body::before {
       </div>
       <canvas id="mazeCanvas" width="340" height="340"></canvas>
     </div>
-    <div class="quiz-panel" id="quizPanel">
+    <div class="quiz-panel waiting" id="quizPanel">
       <div class="quiz-head">
         <div class="turn-card">
           <span class="turn-label">当前回合</span>
-          <div id="currentPlayerLabel" class="current-player">等待游戏开始...</div>
+          <div id="currentPlayerLabel" class="current-player">准备就绪</div>
         </div>
         <div class="quiz-meta">
           <div id="levelTag"></div>
           <div class="timer-wrap" id="timerWrap"><div class="timer-ring" style="--pct:100%"><div class="timer-inner" id="timerText">--</div></div></div>
         </div>
       </div>
-      <div class="quiz-title" id="quizTitle">准备就绪，点击「开始闯关」</div>
-      <div class="quiz-question" id="quizQuestion"></div>
+      <div class="quiz-title" id="quizTitle">选择角色并加入学生后，点击下方「开始闯关」</div>
+      <div class="quiz-question" id="quizQuestion">课堂挑战会在这里显示题目</div>
       <div class="quiz-options" id="quizOptions"></div>
       <div class="quiz-input-wrap" id="quizInput" style="display:none">
         <input type="text" id="quizInputField" placeholder="输入你的答案">
@@ -375,10 +495,16 @@ body::before {
       </ul>
     </div>
   </div>
-  <div class="footer">
-    <span class="join-label">学生加入</span>
-    <input type="text" id="studentName" placeholder="输入姓名">
-    <button onclick="joinGame()">加入游戏</button>
+  <div class="control-card">
+    <div class="control-action">
+      <button class="btn-start" id="btnStart" onclick="startGame()">🚩 开始闯关</button>
+    </div>
+    <div class="join-card">
+      <span class="join-label">学生加入</span>
+      <div class="avatar-picker" id="avatarPicker" aria-label="选择角色"></div>
+      <input type="text" id="studentName" placeholder="输入姓名">
+      <button onclick="joinGame()">加入游戏</button>
+    </div>
   </div>
 </div>
 <div class="overlay hidden" id="teacherOverlay">
@@ -392,6 +518,11 @@ body::before {
     <input type="number" id="startPos" value="0" min="0" max="63">
     <label>终点位置</label>
     <input type="number" id="endPos" value="63" min="0" max="63">
+    <div class="config-actions">
+      <button type="button" onclick="saveClassConfig()">保存配置</button>
+      <button type="button" onclick="loadClassConfig(true)">读取配置</button>
+      <button type="button" onclick="clearClassConfig()">清除保存</button>
+    </div>
     <div class="modal-btns">
       <button class="btn-cancel" onclick="closeTeacherPanel()">关闭</button>
       <button class="btn-ok" onclick="applySettings()">应用设置</button>
@@ -402,6 +533,7 @@ body::before {
   <div class="modal" style="max-width: 600px;">
     <h2>📂 导入题库</h2>
     <p style="font-size:13px; color:#888; margin-bottom:6px;">支持两种导入方式，选择一种即可👇</p>
+    <button class="template-download" onclick="downloadQuestionTemplate()">下载题库模板 JSON</button>
 
     <div style="background:#f5f3ef; border-radius:10px; padding:12px; margin-bottom:10px;">
       <p style="font-weight:600; color:#3d5a40; font-size:14px;">方式一：选择 JSON 文件</p>
@@ -464,6 +596,24 @@ body::before {
     </label>
     <div class="modal-btns">
       <button class="btn-ok" onclick="closeRulePanel()">知道了，开始吧！</button>
+    </div>
+  </div>
+</div>
+<div class="overlay hidden" id="statsOverlay">
+  <div class="modal stats-modal">
+    <h2>📊 课堂统计</h2>
+    <div class="stats-grid" id="statsSummary"></div>
+    <div class="stats-section">
+      <h3>学生表现</h3>
+      <div id="studentStatsList" class="student-stats-list"></div>
+    </div>
+    <div class="stats-section">
+      <h3>多轮记录</h3>
+      <div id="roundHistory" class="round-history"></div>
+    </div>
+    <div class="modal-btns">
+      <button class="btn-cancel" onclick="clearRoundHistory()">清空记录</button>
+      <button class="btn-ok" onclick="closeStatsPanel()">关闭</button>
     </div>
   </div>
 </div>
@@ -562,6 +712,13 @@ let startPos = 0;
 let endPos = 63;
 const GRID = 8;
 let movingPiece = null;
+let selectedAvatar = 'artist';
+let roundRecords = [];
+let currentRoundId = 1;
+let audioContext = null;
+let audioMasterGain = null;
+let answerLocked = false;
+let currentCorrectIndex = -1;
 
 const canvas = document.getElementById('mazeCanvas');
 const CANVAS_CONTEXT_OPTIONS = { alpha: false, desynchronized: true };
@@ -572,12 +729,28 @@ mazeBaseCanvas.width = canvas.width;
 mazeBaseCanvas.height = canvas.height;
 const baseCtx = mazeBaseCanvas.getContext('2d', { alpha: false }) || mazeBaseCanvas.getContext('2d');
 let mazeBaseDirty = true;
+let mazeBaseBitmap = null;
+let mazeWorker = null;
+let mazeWorkerReady = false;
+let mazeRequestId = 0;
 
-let mazePath = buildMazePath(startPos, endPos);
+let mazePath = buildDirectPath(startPos, endPos);
 let pathSet = new Set(mazePath);
 let renderScheduled = false;
 let rankScheduled = false;
 let metaScheduled = false;
+
+const STORAGE_KEY = 'mazeClassConfigV2';
+const STUDENT_COLORS = ['#c95f4f','#c78f44','#6f9b6c','#577f6a','#4f7f91','#8a6f9b','#a46f4f','#608b86'];
+const AVATARS = [
+  { id: 'artist', icon: '🎨', label: '小画家' },
+  { id: 'rocket', icon: '🚀', label: '冲锋者' },
+  { id: 'star', icon: '⭐', label: '星星队员' },
+  { id: 'crown', icon: '👑', label: '皇冠队员' },
+  { id: 'gem', icon: '💎', label: '宝石队员' },
+  { id: 'compass', icon: '🧭', label: '探路队员' }
+];
+let terrainMap = buildTerrainMap();
 
 function scheduleFrame(fn) {
   if (typeof requestAnimationFrame === 'function') requestAnimationFrame(fn);
@@ -615,6 +788,174 @@ function scheduleUIUpdate() {
   scheduleRender();
   scheduleRankList();
   scheduleGameMeta();
+}
+
+function initMazeWorker() {
+  if (!window.Worker) return;
+  try {
+    mazeWorker = new Worker('scripts/maze-worker.js');
+    mazeWorker.onmessage = function(event) {
+      const data = event.data || {};
+      if (data.requestId !== mazeRequestId) return;
+      if (data.type === 'mazeReady') {
+        mazePath = data.path;
+        pathSet = new Set(mazePath);
+        terrainMap = new Map(data.terrainEntries || []);
+        if (mazeBaseBitmap && typeof mazeBaseBitmap.close === 'function') mazeBaseBitmap.close();
+        mazeBaseBitmap = data.bitmap || null;
+        mazeWorkerReady = !!mazeBaseBitmap;
+        mazeBaseDirty = !mazeWorkerReady;
+        students.forEach(student => {
+          student.pos = startPos;
+        });
+        scheduleUIUpdate();
+      } else if (data.type === 'mazeError') {
+        console.warn('Maze worker failed:', data.message);
+        mazeWorkerReady = false;
+        rebuildMazePathFallback();
+        scheduleUIUpdate();
+      }
+    };
+    mazeWorker.onerror = function(error) {
+      console.warn('Maze worker unavailable:', error.message || error);
+      mazeWorkerReady = false;
+      mazeWorker = null;
+      rebuildMazePathFallback();
+      scheduleUIUpdate();
+    };
+  } catch (error) {
+    mazeWorker = null;
+    mazeWorkerReady = false;
+  }
+}
+
+function requestMazeRender() {
+  if (!mazeWorker) {
+    rebuildMazePathFallback();
+    return;
+  }
+  mazeRequestId++;
+  mazeBaseDirty = true;
+  mazeWorker.postMessage({
+    type: 'renderMaze',
+    requestId: mazeRequestId,
+    grid: GRID,
+    width: canvas.width,
+    height: canvas.height,
+    startPos,
+    endPos
+  });
+}
+
+function buildTerrainMap() {
+  const map = new Map();
+  for (let idx = 0; idx < GRID * GRID; idx++) {
+    const seed = (idx * 37 + Math.floor(idx / GRID) * 11) % 19;
+    if (seed === 0) map.set(idx, 'chest');
+    else if (seed === 3 || seed === 9) map.set(idx, 'grass');
+    else if (seed === 6 || seed === 14) map.set(idx, 'stone');
+    else if (seed === 12) map.set(idx, 'block');
+  }
+  return map;
+}
+
+function drawTerrain(targetCtx, x, y, type, onPath) {
+  targetCtx.save();
+  targetCtx.translate(x, y);
+  targetCtx.globalAlpha = onPath ? 0.72 : 0.58;
+  if (type === 'grass') {
+    targetCtx.strokeStyle = '#6f9b6c';
+    targetCtx.lineWidth = 1.6;
+    for (let i = 0; i < 4; i++) {
+      const ox = 12 + i * 7;
+      targetCtx.beginPath();
+      targetCtx.moveTo(ox, CELL - 12);
+      targetCtx.quadraticCurveTo(ox - 4, CELL - 20, ox + 3, CELL - 27);
+      targetCtx.stroke();
+    }
+  } else if (type === 'stone') {
+    targetCtx.fillStyle = '#a7a093';
+    targetCtx.strokeStyle = 'rgba(86,76,62,0.22)';
+    targetCtx.beginPath();
+    roundedRect(targetCtx, 12, 12, 19, 14, 5);
+    targetCtx.fill();
+    targetCtx.stroke();
+    targetCtx.beginPath();
+    roundedRect(targetCtx, 24, 25, 12, 9, 4);
+    targetCtx.fill();
+  } else if (type === 'chest') {
+    targetCtx.fillStyle = '#b97954';
+    targetCtx.strokeStyle = 'rgba(89,55,32,0.28)';
+    targetCtx.lineWidth = 1.5;
+    targetCtx.beginPath();
+    roundedRect(targetCtx, 12, 18, 22, 16, 4);
+    targetCtx.fill();
+    targetCtx.stroke();
+    targetCtx.fillStyle = '#d6a24d';
+    targetCtx.fillRect(21, 18, 4, 16);
+    targetCtx.fillRect(13, 24, 20, 3);
+  } else if (type === 'block') {
+    targetCtx.fillStyle = '#9b8668';
+    targetCtx.strokeStyle = 'rgba(75,58,38,0.22)';
+    targetCtx.lineWidth = 1.3;
+    targetCtx.beginPath();
+    roundedRect(targetCtx, 11, 12, 24, 22, 5);
+    targetCtx.fill();
+    targetCtx.stroke();
+    targetCtx.strokeStyle = 'rgba(255,255,255,0.22)';
+    targetCtx.beginPath();
+    targetCtx.moveTo(15, 19);
+    targetCtx.lineTo(31, 19);
+    targetCtx.moveTo(18, 27);
+    targetCtx.lineTo(29, 27);
+    targetCtx.stroke();
+  }
+  targetCtx.restore();
+}
+
+function roundedRect(targetCtx, x, y, width, height, radius) {
+  const r = Math.min(radius, width / 2, height / 2);
+  targetCtx.moveTo(x + r, y);
+  targetCtx.lineTo(x + width - r, y);
+  targetCtx.quadraticCurveTo(x + width, y, x + width, y + r);
+  targetCtx.lineTo(x + width, y + height - r);
+  targetCtx.quadraticCurveTo(x + width, y + height, x + width - r, y + height);
+  targetCtx.lineTo(x + r, y + height);
+  targetCtx.quadraticCurveTo(x, y + height, x, y + height - r);
+  targetCtx.lineTo(x, y + r);
+  targetCtx.quadraticCurveTo(x, y, x + r, y);
+}
+
+function renderAvatarPicker() {
+  const picker = document.getElementById('avatarPicker');
+  if (!picker) return;
+  picker.innerHTML = AVATARS.map(avatar => (
+    '<button type="button" class="avatar-choice'+(avatar.id === selectedAvatar ? ' selected' : '')+'" '+
+    'title="'+avatar.label+'" aria-label="'+avatar.label+'" onclick="selectAvatar(\''+avatar.id+'\')">'+avatar.icon+'</button>'
+  )).join('');
+}
+
+function selectAvatar(id) {
+  if (AVATARS.some(avatar => avatar.id === id)) selectedAvatar = id;
+  renderAvatarPicker();
+}
+
+function getAvatar(id) {
+  return AVATARS.find(avatar => avatar.id === id) || AVATARS[0];
+}
+
+function freshStudentStats() {
+  return { total: 0, correct: 0, wrong: 0 };
+}
+
+function setWaitingMode(enabled) {
+  const panel = document.getElementById('quizPanel');
+  if (!panel) return;
+  panel.classList.toggle('waiting', enabled);
+}
+
+function deferWork(fn, delay) {
+  setTimeout(fn, delay);
 }
 
 function clampPosition(pos, fallback) {
@@ -706,11 +1047,24 @@ function findRandomPath(to, path, visited, maxLength) {
   return null;
 }
 
-function rebuildMazePath() {
+function rebuildMazePathFallback() {
   mazePath = buildMazePath(startPos, endPos);
   pathSet = new Set(mazePath);
+  terrainMap = buildTerrainMap();
+  if (mazeBaseBitmap && typeof mazeBaseBitmap.close === 'function') mazeBaseBitmap.close();
+  mazeBaseBitmap = null;
+  mazeWorkerReady = false;
   mazeBaseDirty = true;
   scheduleGameMeta();
+}
+
+function rebuildMazePath() {
+  if (mazeWorker) {
+    requestMazeRender();
+    scheduleGameMeta();
+    return;
+  }
+  rebuildMazePathFallback();
 }
 
 function getStudentStepIndex(student) {
@@ -751,6 +1105,9 @@ function drawMazeBase() {
       baseCtx.strokeStyle = onPath ? 'rgba(86,118,78,0.26)' : 'rgba(103,87,63,0.22)';
       baseCtx.lineWidth = 1;
       baseCtx.strokeRect(x + 2, y + 2, CELL - 4, CELL - 4);
+      if (idx !== startPos && idx !== endPos && terrainMap.has(idx)) {
+        drawTerrain(baseCtx, x, y, terrainMap.get(idx), onPath);
+      }
     }
   }
   baseCtx.strokeStyle = 'rgba(91, 117, 78, 0.28)'; baseCtx.lineWidth = 9; baseCtx.lineCap = 'round'; baseCtx.lineJoin = 'round'; baseCtx.beginPath();
@@ -780,9 +1137,13 @@ function drawMazeBase() {
 }
 
 function drawMaze() {
-  if (mazeBaseDirty) drawMazeBase();
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  ctx.drawImage(mazeBaseCanvas, 0, 0);
+  if (mazeWorkerReady && mazeBaseBitmap) {
+    ctx.drawImage(mazeBaseBitmap, 0, 0);
+  } else {
+    if (mazeBaseDirty) drawMazeBase();
+    ctx.drawImage(mazeBaseCanvas, 0, 0);
+  }
   students.forEach((s, i) => {
     if (movingPiece && movingPiece.student === s) return;
     const col = s.pos % GRID, row = Math.floor(s.pos / GRID);
@@ -835,8 +1196,12 @@ function drawStudentPiece(student, cx, cy, active) {
   ctx.strokeStyle = shadeColor(student.color, -28); ctx.lineWidth = 1.3; ctx.stroke();
 
   ctx.strokeStyle = 'rgba(255,255,255,0.9)'; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI*2); ctx.stroke();
-  ctx.fillStyle = '#fff'; ctx.font = 'bold 13px sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-  ctx.fillText(student.name.charAt(0), cx, cy + 1);
+  const avatar = getAvatar(student.avatar).icon || student.name.charAt(0);
+  ctx.fillStyle = '#fff';
+  ctx.font = '16px "Segoe UI Emoji", "Apple Color Emoji", "Microsoft YaHei", sans-serif';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(avatar, cx, cy + 1);
 }
 
 function cellCenter(pos) {
@@ -871,16 +1236,15 @@ function moveStudentAlongPath(student, fromPos, toPos, done) {
   requestAnimationFrame(step);
 }
 
-const STUDENT_COLORS = ['#c95f4f','#c78f44','#6f9b6c','#577f6a','#4f7f91','#8a6f9b','#a46f4f','#608b86'];
-
 function joinGame() {
   const input = document.getElementById('studentName');
   const name = input.value.trim();
   if (!name) { alert('请输入你的姓名！'); return; }
   if (students.some(s => s.name === name)) { alert('这个名字已经在游戏中啦！'); return; }
   const color = STUDENT_COLORS[students.length % STUDENT_COLORS.length];
-  students.push({ name, pos: startPos, color, score: 0, usedQ: {basic:[],intermediate:[],advanced:[]} });
+  students.push({ name, pos: startPos, color, avatar: selectedAvatar, score: 0, stats: freshStudentStats(), usedQ: {basic:[],intermediate:[],advanced:[]} });
   input.value = '';
+  saveClassConfig(false);
   scheduleUIUpdate();
 }
 
@@ -891,7 +1255,7 @@ function updateRankList() {
   list.innerHTML = sorted.map((s,i) => {
     let cls = 'normal'; if (i === 0) cls = 'gold'; else if (i === 1) cls = 'silver'; else if (i === 2) cls = 'bronze';
     const active = gameStarted && currentStudentIdx >= 0 && students[currentStudentIdx] === s;
-    return '<li class="rank-item'+(active?' active':'')+'"><div class="rank-badge '+cls+'">'+(i+1)+'</div><span class="rank-name">'+s.name+'</span><span class="rank-pos">第'+(getStudentStepIndex(s)+1)+'/'+mazePath.length+' 步</span></li>';
+    return '<li class="rank-item'+(active?' active':'')+'"><div class="rank-badge '+cls+'">'+(i+1)+'</div><span class="rank-avatar">'+getAvatar(s.avatar).icon+'</span><span class="rank-name">'+s.name+'</span><span class="rank-pos">第'+(getStudentStepIndex(s)+1)+'/'+mazePath.length+' 步</span></li>';
   }).join('');
 }
 
@@ -909,7 +1273,9 @@ function updateGameMeta() {
 
 function startGame() {
   if (students.length === 0) { alert('请先加入学生！'); return; }
+  warmAudio();
   gameStarted = true; currentStudentIdx = 0;
+  setWaitingMode(false);
   document.getElementById('btnStart').textContent = '⏩ 下一位';
   document.getElementById('btnStart').onclick = nextStudent;
   scheduleGameMeta();
@@ -929,6 +1295,7 @@ function nextStudent() {
 
 function presentQuestion() {
   if (!gameStarted || currentStudentIdx < 0) return;
+  setWaitingMode(false);
   const student = students[currentStudentIdx];
   document.getElementById('currentPlayerLabel').innerHTML = '🎯 轮到 <span>'+student.name+'</span> 答题';
   scheduleRankList();
@@ -947,12 +1314,16 @@ function presentQuestion() {
   const qIdx = bank.indexOf(available[Math.floor(Math.random() * available.length)]);
   const q = bank[qIdx];
   student.usedQ[level].push(qIdx);
+  answerLocked = false;
+  currentCorrectIndex = Number.isInteger(q.answer) ? q.answer : -1;
   document.getElementById('quizQuestion').textContent = q.question;
   document.getElementById('quizTitle').textContent = '请选择正确答案';
 
   const optDiv = document.getElementById('quizOptions');
   const inpDiv = document.getElementById('quizInput');
+  optDiv.classList.remove('locked');
   if (level === 'advanced') {
+    currentCorrectIndex = -1;
     optDiv.style.display = 'none'; inpDiv.style.display = 'flex';
     document.getElementById('quizInputField').value = '';
     document.getElementById('quizInputField').dataset.answer = q.answer;
@@ -960,7 +1331,7 @@ function presentQuestion() {
     document.getElementById('quizInputField').focus();
   } else {
     optDiv.style.display = 'grid'; inpDiv.style.display = 'none';
-    optDiv.innerHTML = q.options.map((o,i) => '<div class="quiz-option" data-idx="'+i+'" data-answer="'+q.answer+'" onclick="selectOption(this)">'+o+'</div>').join('');
+    optDiv.innerHTML = q.options.map((o,i) => '<div class="quiz-option" data-idx="'+i+'" onclick="selectOption(this)">'+o+'</div>').join('');
   }
   startTimer();
 }
@@ -978,16 +1349,25 @@ function startTimer() {
 }
 
 function selectOption(el) {
+  if (answerLocked) return;
+  answerLocked = true;
   if (timerInterval) clearInterval(timerInterval);
-  const correct = parseInt(el.dataset.answer); const idx = parseInt(el.dataset.idx); const isCorrect = idx === correct;
-  const opts = document.querySelectorAll('.quiz-option');
-  opts.forEach(o => { o.style.pointerEvents = 'none'; if (parseInt(o.dataset.idx) === correct) o.classList.add('correct'); });
-  if (!isCorrect) el.classList.add('wrong');
-  setTimeout(() => handleAnswer(isCorrect), 600);
+  if (!audioContext) warmAudio();
+  const idx = parseInt(el.dataset.idx);
+  const isCorrect = idx === currentCorrectIndex;
+  el.closest('.quiz-options').classList.add('locked');
+  if (isCorrect) el.classList.add('correct');
+  else el.classList.add('wrong');
+  scheduleFrame(() => {
+    const correctEl = document.querySelector('.quiz-option[data-idx="'+currentCorrectIndex+'"]');
+    if (correctEl) correctEl.classList.add('correct');
+  });
+  deferWork(() => handleAnswer(isCorrect), 600);
 }
 
 function submitInput() {
   if (timerInterval) clearInterval(timerInterval);
+  if (!audioContext) warmAudio();
   const field = document.getElementById('quizInputField');
   handleAnswer(field.value.trim() === field.dataset.answer);
 }
@@ -997,7 +1377,10 @@ function handleAnswer(isCorrect) { scheduleRankList();
   if (!student) return;
   const prevPos = student.pos;
   let moved = false;
+  if (!student.stats) student.stats = freshStudentStats();
+  student.stats.total++;
   if (isCorrect) {
+    student.stats.correct++;
     student.score += 10;
     const ci = mazePath.indexOf(student.pos);
     if (ci >= 0 && ci < mazePath.length-1) {
@@ -1005,15 +1388,19 @@ function handleAnswer(isCorrect) { scheduleRankList();
       moved = true;
     }
     playSound('correct');
-  } else { playSound('wrong'); }
+  } else {
+    student.stats.wrong++;
+    playSound('wrong');
+  }
   if (window.adventureFX) window.adventureFX.answer(isCorrect);
   if (!moved) scheduleRender();
   scheduleRankList();
   const afterMove = () => {
     scheduleRankList();
     if (isAtEnd(student)) {
+    recordRoundWin(student);
     document.getElementById('winnerName').textContent = student.name + ' 成功到达终点！';
-    document.getElementById('winStats').innerHTML = '<span>'+student.score+' 分</span><span>'+mazePath.length+' 步路线</span><span>第 '+(getStudentStepIndex(student)+1)+' 格</span>';
+    document.getElementById('winStats').innerHTML = '<span>'+student.score+' 分</span><span>'+mazePath.length+' 步路线</span><span>正确率 '+getAccuracy(student.stats)+'%</span>';
     document.getElementById('winOverlay').classList.remove('hidden'); playSound('win');
     if (window.adventureFX) window.adventureFX.win();
     return;
@@ -1026,8 +1413,12 @@ function handleAnswer(isCorrect) { scheduleRankList();
 
 function endGame() {
   gameStarted = false; clearInterval(timerInterval);
+  setWaitingMode(true);
   document.getElementById('currentPlayerLabel').textContent = '全部同学已到达终点！';
-  document.getElementById('quizQuestion').textContent = ''; document.getElementById('quizOptions').innerHTML = '';
+  document.getElementById('quizTitle').textContent = '本轮闯关完成';
+  document.getElementById('quizQuestion').textContent = '可以查看课堂统计，或点击「开始闯关」再来一轮';
+  document.getElementById('quizOptions').classList.remove('locked');
+  document.getElementById('quizOptions').innerHTML = '';
   document.getElementById('btnStart').textContent = '🚩 开始闯关'; document.getElementById('btnStart').onclick = startGame;
   scheduleGameMeta();
 }
@@ -1036,23 +1427,64 @@ function closeWin() { document.getElementById('winOverlay').classList.add('hidde
 
 function resetGame() {
   gameStarted = false; currentStudentIdx = -1; clearInterval(timerInterval);
-  students.forEach(s => { s.pos = startPos; s.score = 0; });
-  document.getElementById('currentPlayerLabel').textContent = '等待游戏开始...';
-  document.getElementById('quizQuestion').textContent = ''; document.getElementById('quizOptions').innerHTML = '';
-  document.getElementById('quizTitle').textContent = '准备就绪，点击「开始闯关」';
+  students.forEach(s => { s.pos = startPos; s.score = 0; s.stats = freshStudentStats(); s.usedQ = {basic:[],intermediate:[],advanced:[]}; });
+  setWaitingMode(true);
+  document.getElementById('currentPlayerLabel').textContent = '准备就绪';
+  document.getElementById('quizQuestion').textContent = '课堂挑战会在这里显示题目'; document.getElementById('quizOptions').classList.remove('locked'); document.getElementById('quizOptions').innerHTML = '';
+  document.getElementById('quizTitle').textContent = '选择角色并加入学生后，点击下方「开始闯关」';
   document.getElementById('levelTag').textContent = ''; document.getElementById('timerText').textContent = '--';
   document.getElementById('timerText').style.color = '#3d5a40'; document.querySelector('.timer-ring').style.setProperty('--pct', '100%');
   document.getElementById('btnStart').textContent = '🚩 开始闯关'; document.getElementById('btnStart').onclick = startGame;
+  saveClassConfig(false);
   scheduleUIUpdate();
+}
+
+function getAudioContext() {
+  if (!audioContext) {
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    if (!AudioCtx) return null;
+    audioContext = new AudioCtx();
+    audioMasterGain = audioContext.createGain();
+    audioMasterGain.gain.value = 0.78;
+    audioMasterGain.connect(audioContext.destination);
+  }
+  if (audioContext.state === 'suspended') audioContext.resume();
+  return audioContext;
+}
+
+function warmAudio() {
+  try {
+    getAudioContext();
+  } catch(e) {}
+}
+
+function playTone(type, frequencyPlan, duration, volume) {
+  const actx = getAudioContext();
+  if (!actx || !audioMasterGain) return;
+  const osc = actx.createOscillator();
+  const gain = actx.createGain();
+  osc.connect(gain);
+  gain.connect(audioMasterGain);
+  osc.type = type;
+  const start = actx.currentTime;
+  frequencyPlan.forEach(([time, frequency]) => {
+    osc.frequency.setValueAtTime(frequency, start + time);
+  });
+  gain.gain.setValueAtTime(volume, start);
+  gain.gain.exponentialRampToValueAtTime(0.01, start + duration);
+  osc.start(start);
+  osc.stop(start + duration);
+  osc.onended = function() {
+    osc.disconnect();
+    gain.disconnect();
+  };
 }
 
 function playSound(type) {
   try {
-    const actx = new (window.AudioContext || window.webkitAudioContext)();
-    const osc = actx.createOscillator(); const gain = actx.createGain(); osc.connect(gain); gain.connect(actx.destination);
-    if (type === 'correct') { osc.type = 'sine'; osc.frequency.setValueAtTime(523, actx.currentTime); osc.frequency.setValueAtTime(659, actx.currentTime+0.1); gain.gain.setValueAtTime(0.25, actx.currentTime); gain.gain.exponentialRampToValueAtTime(0.01, actx.currentTime+0.3); osc.start(actx.currentTime); osc.stop(actx.currentTime+0.3); }
-    else if (type === 'wrong') { osc.type = 'sawtooth'; osc.frequency.setValueAtTime(200, actx.currentTime); gain.gain.setValueAtTime(0.15, actx.currentTime); gain.gain.exponentialRampToValueAtTime(0.01, actx.currentTime+0.3); osc.start(actx.currentTime); osc.stop(actx.currentTime+0.3); }
-    else if (type === 'win') { osc.type = 'triangle'; [523,659,784,1047].forEach((f,i) => osc.frequency.setValueAtTime(f,actx.currentTime+i*0.15)); gain.gain.setValueAtTime(0.2,actx.currentTime); gain.gain.exponentialRampToValueAtTime(0.01,actx.currentTime+0.8); osc.start(actx.currentTime); osc.stop(actx.currentTime+0.8); }
+    if (type === 'correct') playTone('sine', [[0, 523], [0.1, 659]], 0.3, 0.24);
+    else if (type === 'wrong') playTone('sawtooth', [[0, 200]], 0.3, 0.14);
+    else if (type === 'win') playTone('triangle', [[0, 523], [0.15, 659], [0.3, 784], [0.45, 1047]], 0.8, 0.2);
   } catch(e) {}
 }
 
@@ -1069,6 +1501,8 @@ function applySettings() {
   endPos = clampPosition(document.getElementById('endPos').value, 63);
   if (startPos === endPos) { alert('起点和终点不能相同'); return; }
   rebuildMazePath();
+  terrainMap = buildTerrainMap();
+  saveClassConfig(false);
   closeTeacherPanel(); resetGame();
 }
 function openImportPanel() { document.getElementById('importOverlay').classList.remove('hidden'); }
@@ -1085,19 +1519,206 @@ function importQuestions() {
     const parsed = JSON.parse(raw);
     if (parsed.basic || parsed.intermediate || parsed.advanced) {
       questionBank = parsed;
+      saveClassConfig(false);
       alert('题库导入成功！共 '+((parsed.basic||[]).length+(parsed.intermediate||[]).length+(parsed.advanced||[]).length)+' 道题目');
       closeImportPanel(); resetGame();
     } else alert('题库格式错误，需要包含 basic / intermediate / advanced 字段');
   } catch(e) { alert('JSON 格式解析失败，请检查！'); }
 }
 
+function getAccuracy(stats) {
+  if (!stats || !stats.total) return 0;
+  return Math.round(stats.correct / stats.total * 100);
+}
+
+function getClassTotals() {
+  return students.reduce((acc, student) => {
+    const stats = student.stats || freshStudentStats();
+    acc.total += stats.total;
+    acc.correct += stats.correct;
+    acc.score += student.score || 0;
+    return acc;
+  }, { total: 0, correct: 0, score: 0 });
+}
+
+function recordRoundWin(winner) {
+  const totals = getClassTotals();
+  roundRecords.unshift({
+    id: currentRoundId++,
+    winner: winner.name,
+    avatar: winner.avatar,
+    score: winner.score,
+    pathLength: mazePath.length,
+    totalAnswers: totals.total,
+    accuracy: totals.total ? Math.round(totals.correct / totals.total * 100) : 0,
+    time: new Date().toLocaleString('zh-CN', { hour12: false })
+  });
+  roundRecords = roundRecords.slice(0, 12);
+  saveClassConfig(false);
+}
+
+function openStatsPanel() {
+  renderStatsPanel();
+  document.getElementById('statsOverlay').classList.remove('hidden');
+}
+
+function closeStatsPanel() {
+  document.getElementById('statsOverlay').classList.add('hidden');
+}
+
+function renderStatsPanel() {
+  const totals = getClassTotals();
+  const classAccuracy = totals.total ? Math.round(totals.correct / totals.total * 100) : 0;
+  document.getElementById('statsSummary').innerHTML =
+    '<div><strong>'+students.length+'</strong><span>参与学生</span></div>'+
+    '<div><strong>'+totals.total+'</strong><span>答题次数</span></div>'+
+    '<div><strong>'+classAccuracy+'%</strong><span>班级正确率</span></div>'+
+    '<div><strong>'+roundRecords.length+'</strong><span>比赛轮次</span></div>';
+
+  const studentList = document.getElementById('studentStatsList');
+  if (students.length === 0) {
+    studentList.innerHTML = '<p class="empty-note">暂无学生数据</p>';
+  } else {
+    studentList.innerHTML = students.map(student => {
+      const stats = student.stats || freshStudentStats();
+      return '<div class="student-stat-row">'+
+        '<span class="stat-avatar">'+getAvatar(student.avatar).icon+'</span>'+
+        '<span class="stat-name">'+student.name+'</span>'+
+        '<span>'+student.score+' 分</span>'+
+        '<span>'+stats.correct+'/'+stats.total+' 题</span>'+
+        '<span>'+getAccuracy(stats)+'%</span>'+
+      '</div>';
+    }).join('');
+  }
+
+  const history = document.getElementById('roundHistory');
+  if (roundRecords.length === 0) {
+    history.innerHTML = '<p class="empty-note">暂无通关记录</p>';
+  } else {
+    history.innerHTML = roundRecords.map(record => (
+      '<div class="round-row">'+
+        '<span>第 '+record.id+' 轮</span>'+
+        '<strong>'+getAvatar(record.avatar).icon+' '+record.winner+'</strong>'+
+        '<span>'+record.score+' 分</span>'+
+        '<span>正确率 '+record.accuracy+'%</span>'+
+      '</div>'
+    )).join('');
+  }
+}
+
+function clearRoundHistory() {
+  if (!confirm('确定清空多轮比赛记录吗？学生名单不会删除。')) return;
+  roundRecords = [];
+  currentRoundId = 1;
+  saveClassConfig(false);
+  renderStatsPanel();
+}
+
+function downloadQuestionTemplate() {
+  const template = {
+    basic: [
+      { question: '选择题题干', options: ['选项A', '选项B', '选项C', '选项D'], answer: 0 }
+    ],
+    intermediate: [
+      { question: '判断题题干', options: ['对', '错'], answer: 0 }
+    ],
+    advanced: [
+      { question: '填空题题干____', answer: '答案' }
+    ]
+  };
+  const blob = new Blob([JSON.stringify(template, null, 2)], { type: 'application/json;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = 'maze-question-template.json';
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  URL.revokeObjectURL(url);
+}
+
+function saveClassConfig(showTip = true) {
+  try {
+    const data = {
+      timeLimit,
+      startPos,
+      endPos,
+      selectedAvatar,
+      questionBank,
+      roundRecords,
+      currentRoundId,
+      students: students.map(student => ({
+        name: student.name,
+        color: student.color,
+        avatar: student.avatar,
+        score: student.score || 0,
+        pos: student.pos || startPos,
+        stats: student.stats || freshStudentStats()
+      }))
+    };
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    if (showTip) alert('课堂配置已保存。');
+  } catch(e) {
+    if (showTip) alert('保存失败，浏览器可能限制了本地存储。');
+  }
+}
+
+function loadClassConfig(showTip) {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) {
+      if (showTip) alert('还没有保存过课堂配置。');
+      return false;
+    }
+    const data = JSON.parse(raw);
+    timeLimit = Number.parseInt(data.timeLimit, 10) || 20;
+    startPos = clampPosition(data.startPos, 0);
+    endPos = clampPosition(data.endPos, 63);
+    if (startPos === endPos) endPos = 63;
+    selectedAvatar = AVATARS.some(avatar => avatar.id === data.selectedAvatar) ? data.selectedAvatar : 'artist';
+    questionBank = data.questionBank || JSON.parse(JSON.stringify(DEFAULT_BANK));
+    roundRecords = Array.isArray(data.roundRecords) ? data.roundRecords : [];
+    currentRoundId = Number.parseInt(data.currentRoundId, 10) || (roundRecords.length + 1);
+    students = Array.isArray(data.students) ? data.students.map((student, idx) => ({
+      name: student.name,
+      color: student.color || STUDENT_COLORS[idx % STUDENT_COLORS.length],
+      avatar: student.avatar || AVATARS[idx % AVATARS.length].id,
+      pos: startPos,
+      score: 0,
+      stats: freshStudentStats(),
+      usedQ: {basic:[],intermediate:[],advanced:[]}
+    })).filter(student => student.name) : [];
+    renderAvatarPicker();
+    if (showTip) {
+      rebuildMazePath();
+      resetGame();
+    }
+    if (showTip) alert('已读取本地课堂配置。');
+    return true;
+  } catch(e) {
+    if (showTip) alert('读取失败，保存的数据可能已损坏。');
+    return false;
+  }
+}
+
+function clearClassConfig() {
+  if (!confirm('确定清除本地保存的课堂配置吗？当前页面数据不会立即删除。')) return;
+  localStorage.removeItem(STORAGE_KEY);
+  alert('已清除本地保存。');
+}
+
+initMazeWorker();
+renderAvatarPicker();
+loadClassConfig(false);
+rebuildMazePath();
 scheduleUIUpdate();
 
 document.addEventListener('keydown', function(e) {
   if (e.key === '1' || e.key === '2' || e.key === '3' || e.key === '4') {
+    if (answerLocked) return;
     const idx = parseInt(e.key) - 1;
     const opts = document.querySelectorAll('.quiz-option');
-    if (opts.length > idx) { const el = opts[idx]; if (el && el.style.pointerEvents !== 'none') selectOption(el); }
+    if (opts.length > idx) { const el = opts[idx]; if (el) selectOption(el); }
   }
 });
 
